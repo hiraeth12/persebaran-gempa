@@ -5,6 +5,7 @@ import EarthquakeLayer from './EarthquakeLayer';
 import GeoJsonLayer from './GeoJsonLayer';
 import FaultLineLayer from './FaultLineLayer';
 
+
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 const MapComponent = () => {
@@ -27,6 +28,9 @@ const MapComponent = () => {
       map.current.setFog({});
       setMapInstance(map.current);
     });
+
+    
+
   }, []);
 
   return (
