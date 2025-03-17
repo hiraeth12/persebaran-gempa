@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { fetchEarthquakeData } from "../utils/fetchEarthquakeData";
-import EarthquakePopup from "./EarthquakePopup";
 import mapboxgl from "mapbox-gl";
+import EarthquakePopup from "./EarthquakePopup"; 
 
 const EarthquakeLayer = ({ map }) => {
   useEffect(() => {
@@ -18,7 +18,6 @@ const EarthquakeLayer = ({ map }) => {
         map.getSource("earthquakes").setData(earthquakeData);
       }
 
-      // Tambahkan layer untuk visualisasi gempa
       if (!map.getLayer("earthquakes-layer")) {
         map.addLayer({
           id: "earthquakes-layer",
@@ -30,14 +29,14 @@ const EarthquakeLayer = ({ map }) => {
             "circle-color": [
               "case",
               ["<=", ["to-number", ["get", "depth"]], 50],
-              "#ff0000", // Merah
+              "#ff0000",
               ["<=", ["to-number", ["get", "depth"]], 100],
-              "#ff8c00", // Orange
+              "#ff8c00",
               ["<=", ["to-number", ["get", "depth"]], 250],
-              "#fff017", // Kuning
+              "#fff017",
               ["<=", ["to-number", ["get", "depth"]], 600],
-              "#008000", // Hijau
-              "#0000ff", // Biru untuk lebih dari 600
+              "#008000",
+              "#0000ff",
             ],
             "circle-stroke-color": "white",
           },
@@ -45,7 +44,6 @@ const EarthquakeLayer = ({ map }) => {
       }
     };
 
-    // Cursor pointer saat hover marker
     map.on("mouseenter", "earthquakes-layer", () => {
       map.getCanvas().style.cursor = "pointer";
     });
@@ -54,11 +52,9 @@ const EarthquakeLayer = ({ map }) => {
       map.getCanvas().style.cursor = "";
     });
 
-    // Event klik untuk menampilkan popup gempa
     map.on("click", "earthquakes-layer", (e) => {
       const coordinates = e.features[0].geometry.coordinates;
       const properties = e.features[0].properties;
-
       const popupContainer = document.createElement("div");
       const root = createRoot(popupContainer);
 
@@ -66,7 +62,12 @@ const EarthquakeLayer = ({ map }) => {
         <EarthquakePopup properties={properties} coordinates={coordinates} />
       );
 
-      new mapboxgl.Popup()
+      new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: true,
+        className: "custom-popup",
+        offset: [0, -45],
+      })
         .setLngLat(coordinates)
         .setDOMContent(popupContainer)
         .addTo(map);
