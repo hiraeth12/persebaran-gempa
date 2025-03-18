@@ -1,13 +1,15 @@
 import { useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import { fetchEarthquakeData } from "../utils/fetchEarthquakeData";
+import { fetchEarthquakeData } from "../../../utils/fetchEarthquakeData";
 import mapboxgl from "mapbox-gl";
-import EarthquakePopup from "./EarthquakePopup"; 
+import EarthquakePopup from "../EarthquakePopup"; 
+import AnimatedPopup from "mapbox-gl-animated-popup";
 
 const EarthquakeLayer = ({ map }) => {
   useEffect(() => {
     const loadEarthquakeData = async () => {
       const earthquakeData = await fetchEarthquakeData();
+
 
       if (!map.getSource("earthquakes")) {
         map.addSource("earthquakes", {
@@ -42,6 +44,7 @@ const EarthquakeLayer = ({ map }) => {
           },
         });
       }
+      
     };
 
     map.on("mouseenter", "earthquakes-layer", () => {
@@ -66,7 +69,14 @@ const EarthquakeLayer = ({ map }) => {
         closeButton: false,
         closeOnClick: true,
         className: "custom-popup",
-        offset: [0, -45],
+      })
+      
+      const popup = new AnimatedPopup({
+        closeButton: false,
+        closeOnClick: true,
+        className: "custom-popup",
+        openingAnimation: { duration: 100, easing: "easeOutSine", transform: "scale" },
+        closingAnimation: { duration: 100, easing: "easeInOutSine", transform: "scale" },
       })
         .setLngLat(coordinates)
         .setDOMContent(popupContainer)

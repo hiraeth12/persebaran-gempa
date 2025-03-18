@@ -83,7 +83,6 @@
 
 
 .strip-bar {
-
   background-image: url("/images/strip.svg");
   background-size: 17%; 
   width: max(200vw,2000px);
@@ -125,8 +124,6 @@
   border-top: 1px solid var(--red);
   border-bottom: 1px solid var(--red);
   position: fixed;
-
-
 }
 
 .strip-bar-vertical {
@@ -146,6 +143,3 @@
           
 }
 
-.mapboxgl-popup-tip {
-  display: none !important;
-}

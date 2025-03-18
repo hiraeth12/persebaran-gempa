@@ -57,7 +57,7 @@ const GeoJsonLayer = ({ map }) => {
             source: 'kabkota',
             paint: {
               'line-color': '#FF5252',
-              'line-width': 2.5
+              'line-width': 1.5
             },
             filter: ['in', 'mhid', '']
           });
@@ -66,25 +66,25 @@ const GeoJsonLayer = ({ map }) => {
       .catch((error) => console.error('Error loading GeoJSON:', error));
 
     // Event hover
-    map.on('mousemove', 'kabkota-hover', (e) => {
-      const features = e.features[0];
-      const mhid = features.properties.mhid;
+  //   map.on('mousemove', 'kabkota-hover', (e) => {
+  //     const features = e.features[0];
+  //     const mhid = features.properties.mhid;
 
-      // Set filter untuk highlight area
-      map.setFilter('kabkota-fill', ['in', 'mhid', mhid]);
-      map.setFilter('kabkota-highlight', ['in', 'mhid', mhid]);
+  //     // Set filter untuk highlight area
+  //     map.setFilter('kabkota-fill', ['in', 'mhid', mhid]);
+  //     map.setFilter('kabkota-highlight', ['in', 'mhid', mhid]);
 
-      // Ubah cursor menjadi pointer
-      map.getCanvas().style.cursor = 'pointer';
-    });
+  //     // Ubah cursor menjadi pointer
+  //     map.getCanvas().style.cursor = 'pointer';
+  //   });
 
-    // Event saat keluar dari area hover
-    map.on('mouseleave', 'kabkota-hover', () => {
-      map.setFilter('kabkota-fill', ['in', 'mhid', '']);
-      map.setFilter('kabkota-highlight', ['in', 'mhid', '']);
-      map.getCanvas().style.cursor = '';
-    }
-  );
+  //   // Event saat keluar dari area hover
+  //   map.on('mouseleave', 'kabkota-hover', () => {
+  //     map.setFilter('kabkota-fill', ['in', 'mhid', '']);
+  //     map.setFilter('kabkota-highlight', ['in', 'mhid', '']);
+  //     map.getCanvas().style.cursor = '';
+  //   }
+  // );
 
     // Event klik untuk menampilkan nama daerah
     // map.on('click', 'kabkota-hover', (e) => {

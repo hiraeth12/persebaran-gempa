@@ -1,8 +1,6 @@
 const EarthquakePopup = ({ properties, coordinates }) => {
   return (
     <div className="relative">
-      <div className="absolute left-1/2 top-full h-12 w-0.5 bg-red-500 transform -translate-x-1/2"></div>
-
       <div className="bg-black text-white p-4 rounded-lg shadow-lg border border-red-500 relative">
         <div className="text-center">
           <p className="p-1 bg-red-700 font-bold text-xs text-white">
