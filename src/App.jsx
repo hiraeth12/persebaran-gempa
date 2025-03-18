@@ -1,4 +1,4 @@
-import MapComponent from "./components/map/MapComponent";
+import MapComponent from "./features/map/MapComponent";
 
 
 function App() {
