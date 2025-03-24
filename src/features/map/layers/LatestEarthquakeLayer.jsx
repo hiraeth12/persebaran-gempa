@@ -1,24 +1,70 @@
 import { useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import mapboxgl from "mapbox-gl";
 import AnimatedPopup from "mapbox-gl-animated-popup";
 import EarthquakePopup from "../EarthquakePopup";
-import { fetchLatestEarthquake } from "../../../utils/fetchLatestEarthquake"; 
+import { fetchLatestEarthquake } from "../../../utils/fetchLatestEarthquake";
+
+let latestEarthquakeData = null; // Simpan data gempa terbaru
+let mapInstance = null; // Simpan referensi map
+
+export const showLatestEarthquakePopup = () => {
+  if (!mapInstance) return;
+
+  const features = mapInstance.querySourceFeatures("latest-earthquake");
+
+  if (features.length > 0) {
+    const latestEarthquake = features[0];
+    const coordinates = latestEarthquake.geometry.coordinates;
+    const properties = latestEarthquake.properties;
+
+    // Pusatkan peta ke lokasi gempa
+    mapInstance.flyTo({
+      center: coordinates,
+      essential: true,
+    });
+
+    // Tampilkan popup
+    const popupContainer = document.createElement("div");
+    const root = createRoot(popupContainer);
+
+    root.render(
+      <EarthquakePopup properties={properties} coordinates={coordinates} />
+    );
+
+    new AnimatedPopup({
+      closeButton: false,
+      closeOnClick: true,
+      className: "custom-popup",
+      openingAnimation: {
+        duration: 100,
+        easing: "easeOutSine",
+        transform: "scale",
+      },
+      closingAnimation: {
+        duration: 100,
+        easing: "easeInOutSine",
+        transform: "scale",
+      },
+    })
+      .setLngLat(coordinates)
+      .setDOMContent(popupContainer)
+      .addTo(mapInstance);
+  }
+};
 
 const LatestEarthquakeLayer = ({ map }) => {
   useEffect(() => {
-    let latestEarthquakeData = null; // Simpan data gempa terbaru untuk perbandingan
+    mapInstance = map; // Simpan referensi map
 
     const loadLatestEarthquake = async () => {
       const latestData = await fetchLatestEarthquake();
       if (latestData.features.length === 0) return;
       const latestQuake = latestData.features[0];
 
-      // Cek apakah data terbaru berbeda dengan yang terakhir disimpan
       if (latestEarthquakeData && latestEarthquakeData.id === latestQuake.properties.id) {
-        return; // Tidak perlu update jika data sama
+        return;
       }
-      latestEarthquakeData = latestQuake.properties; // Simpan data terbaru
+      latestEarthquakeData = latestQuake.properties;
 
       const earthquakeGeoJson = {
         type: "FeatureCollection",
@@ -40,14 +86,13 @@ const LatestEarthquakeLayer = ({ map }) => {
           type: "circle",
           source: "latest-earthquake",
           paint: {
-            "circle-radius": ["*", ["to-number", ["get", "mag"]], 3],
+            "circle-radius": ["*", ["to-number", ["get", "mag"]], 1.5],
             "circle-stroke-width": 2,
-            "circle-color": "#964B00", // Warna coklat untuk gempa terbaru
+            "circle-color": "#964B00",
             "circle-stroke-color": "white",
           },
         });
 
-        // Tambahkan event listener untuk interaksi pengguna
         map.on("mouseenter", "latest-earthquake-layer", () => {
           map.getCanvas().style.cursor = "pointer";
         });
@@ -57,45 +102,16 @@ const LatestEarthquakeLayer = ({ map }) => {
         });
 
         map.on("click", "latest-earthquake-layer", (e) => {
-          const coordinates = e.features[0].geometry.coordinates;
-          const properties = e.features[0].properties;
-          const popupContainer = document.createElement("div");
-          const root = createRoot(popupContainer);
-
-          root.render(
-            <EarthquakePopup properties={properties} coordinates={coordinates} />
-          );
-
-          new AnimatedPopup({
-            closeButton: false,
-            closeOnClick: true,
-            className: "custom-popup",
-            openingAnimation: {
-              duration: 100,
-              easing: "easeOutSine",
-              transform: "scale",
-            },
-            closingAnimation: {
-              duration: 100,
-              easing: "easeInOutSine",
-              transform: "scale",
-            },
-          })
-            .setLngLat(coordinates)
-            .setDOMContent(popupContainer)
-            .addTo(map);
+          showLatestEarthquakePopup(); // Panggil fungsi popup saat diklik
         });
       }
     };
 
     loadLatestEarthquake();
-
-    // Auto-refresh setiap 5 menit
     const interval = setInterval(loadLatestEarthquake, 300000);
 
     return () => {
       clearInterval(interval);
-      // Hapus event listener saat komponen di-unmount
       if (map.getLayer("latest-earthquake-layer")) {
         map.off("click", "latest-earthquake-layer");
         map.off("mouseenter", "latest-earthquake-layer");

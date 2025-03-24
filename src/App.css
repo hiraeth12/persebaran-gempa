@@ -1,0 +1,23 @@
+.info {
+  display: flex;
+  justify-content: space-between;
+}
+
+.label {
+  min-width: 100px;
+  text-align: left;
+}
+
+#root {
+  display: flex;
+  height: 100vh;
+}
+
+.map-container {
+  flex: 1;
+  position: relative;
+}
+
+.font-reenie {
+  font-family: "Reenie Beanie", cursive;
+}

@@ -1,11 +1,13 @@
 import MapComponent from "./features/map/MapComponent";
-
+import React from "react";
 
 function App() {
   return (
-    <div>
-      <MapComponent />
-    </div>
+    <main>
+      <div>
+        <MapComponent />
+      </div>
+    </main>
   );
 }
 
