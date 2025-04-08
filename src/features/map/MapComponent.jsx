@@ -5,7 +5,9 @@ import EarthquakeLayer from "./layers/EarthquakeLayer";
 import GeoJsonLayer from "./layers/GeoJsonLayer";
 import FaultLineLayer from "./layers/FaultLineLayer";
 import LatestEarthquakeLayer from "./layers/LatestEarthquakeLayer";
-import FeltEarthquakeLayer, { showFeltEarthquakePopup } from "./layers/FeltEarthquakeLayer";
+import FeltEarthquakeLayer, {
+  showFeltEarthquakePopup,
+} from "./layers/FeltEarthquakeLayer";
 import AppSidebar from "@/components/Map-sidebar";
 import { FiChevronRight } from "react-icons/fi";
 import { showLatestEarthquakePopup } from "./layers/LatestEarthquakeLayer";
@@ -18,6 +20,7 @@ const MapComponent = () => {
   const sidebarRef = useRef(null);
   const [mapInstance, setMapInstance] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [magnitudeFilter, setMagnitudeFilter] = useState(10); // default: tampilkan semua
 
   useEffect(() => {
     if (map.current) return;
@@ -80,6 +83,9 @@ const MapComponent = () => {
             setIsSidebarOpen(false);
             showFeltEarthquakePopup();
           }}
+          onFilterChange={(value) => {
+            setMagnitudeFilter(value);
+          }}
         />
       </div>
 
@@ -97,7 +103,10 @@ const MapComponent = () => {
       <div ref={mapContainer} className="flex-1" style={{ height: "100vh" }}>
         {mapInstance && (
           <>
-            <EarthquakeLayer map={mapInstance} />
+            <EarthquakeLayer
+              map={mapInstance}
+              magnitudeFilter={magnitudeFilter}
+            />
             <GeoJsonLayer map={mapInstance} />
             <FaultLineLayer map={mapInstance} />
             <LatestEarthquakeLayer map={mapInstance} />
