@@ -1,13 +1,12 @@
-import MapComponent from "./features/map/MapComponent";
 import React from "react";
+import { Routes, Route } from "react-router-dom";
+import MapPage from "./pages/MapPages";
 
 function App() {
   return (
-    <main>
-      <div>
-        <MapComponent />
-      </div>
-    </main>
+    <Routes>
+      <Route path="/" element={<MapPage />} />
+    </Routes>
   );
 }
 

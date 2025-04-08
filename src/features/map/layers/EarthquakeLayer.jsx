@@ -2,23 +2,40 @@ import { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { fetchEarthquakeData } from "../../../utils/fetchEarthquakeData";
 import mapboxgl from "mapbox-gl";
-import EarthquakePopup from "../EarthquakePopup"; 
+import EarthquakePopup from "../EarthquakePopup";
 import AnimatedPopup from "mapbox-gl-animated-popup";
 
-const EarthquakeLayer = ({ map }) => {
+const EarthquakeLayer = ({ map, magnitudeFilter }) => {
   useEffect(() => {
     const loadEarthquakeData = async () => {
       const earthquakeData = await fetchEarthquakeData();
 
+      const filteredFeatures = earthquakeData.features.filter(
+        (feature) => feature.properties.mag < magnitudeFilter
+      );
+
+      const filteredData = {
+        type: "FeatureCollection",
+        features: filteredFeatures,
+      };
 
       if (!map.getSource("earthquakes")) {
         map.addSource("earthquakes", {
           type: "geojson",
-          data: earthquakeData,
+          data: filteredData,
         });
       } else {
-        map.getSource("earthquakes").setData(earthquakeData);
+        map.getSource("earthquakes").setData(filteredData);
       }
+
+      // if (!map.getSource("earthquakes")) {
+      //   map.addSource("earthquakes", {
+      //     type: "geojson",
+      //     data: earthquakeData,
+      //   });
+      // } else {
+      //   map.getSource("earthquakes").setData(earthquakeData);
+      // }
 
       if (!map.getLayer("earthquakes-layer")) {
         map.addLayer({
@@ -44,7 +61,6 @@ const EarthquakeLayer = ({ map }) => {
           },
         });
       }
-      
     };
 
     map.on("mouseenter", "earthquakes-layer", () => {
@@ -69,14 +85,22 @@ const EarthquakeLayer = ({ map }) => {
         closeButton: false,
         closeOnClick: true,
         className: "custom-popup",
-      })
-      
+      });
+
       const popup = new AnimatedPopup({
         closeButton: false,
         closeOnClick: true,
         className: "custom-popup",
-        openingAnimation: { duration: 100, easing: "easeOutSine", transform: "scale" },
-        closingAnimation: { duration: 100, easing: "easeInOutSine", transform: "scale" },
+        openingAnimation: {
+          duration: 100,
+          easing: "easeOutSine",
+          transform: "scale",
+        },
+        closingAnimation: {
+          duration: 100,
+          easing: "easeInOutSine",
+          transform: "scale",
+        },
       })
         .setLngLat(coordinates)
         .setDOMContent(popupContainer)
@@ -84,7 +108,7 @@ const EarthquakeLayer = ({ map }) => {
     });
 
     loadEarthquakeData();
-  }, [map]);
+  }, [map,magnitudeFilter]);
 
   return null;
 };

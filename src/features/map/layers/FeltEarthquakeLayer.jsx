@@ -12,7 +12,7 @@ export const showFeltEarthquakePopup = () => {
 
   const features = mapInstance.querySourceFeatures("felt-earthquake");
 
-  if (features.length > 0) {  
+  if (features.length > 0) {
     const feltEarthquake = features[0];
     const coordinates = feltEarthquake.geometry.coordinates;
     const properties = feltEarthquake.properties;
@@ -80,8 +80,10 @@ const FeltEarthquakeLayer = ({ map, magnitudeFilter }) => {
           shakemap,
         } = data.info;
 
-        if (magnitudeFilter && parseFloat(magnitude) < parseFloat(magnitudeFilter)) {
-          console.log(`Skipping earthquake with magnitude ${magnitude} (Filter: ${magnitudeFilter})`);
+        if (
+          magnitudeFilter &&
+          parseFloat(magnitude) >= parseFloat(magnitudeFilter)
+        ) {
           return;
         }
 
@@ -200,7 +202,7 @@ const FeltEarthquakeLayer = ({ map, magnitudeFilter }) => {
         map.off("mouseleave", "felt-earthquake-layer");
       }
     };
-  }, [map]);
+  }, [map, magnitudeFilter]);
 
   return null;
 };

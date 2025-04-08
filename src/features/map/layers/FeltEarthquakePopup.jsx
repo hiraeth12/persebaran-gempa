@@ -43,8 +43,18 @@ const FeltEarthquakePopup = ({ properties, coordinates }) => {
               src={properties.shakemap_mmi}
               alt="Shakemap MMI"
               className="w-full h-auto rounded border border-gray-500"
-              onError={(e) => (e.target.style.display = "none")} // Sembunyikan jika gagal load
+              onError={(e) => (e.target.style.display = "none")}
             />
+            <div className="text-center mt-1">
+              <a
+                href={properties.shakemap_mmi}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 text-xs underline hover:text-blue-200"
+              >
+                Buka gambar di tab baru
+              </a>
+            </div>
           </div>
         )}
       </div>

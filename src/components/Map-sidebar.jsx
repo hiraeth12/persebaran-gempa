@@ -79,10 +79,10 @@ const AppSidebar = ({
               className="w-full p-2 rounded-md border dark:border-gray-700 bg-white dark:bg-gray-700"
             >
               <option value="10">Semua</option>
-              <option value="3">{"< 3.0"}</option>
-              <option value="4">{"< 4.0"}</option>
-              <option value="5">{"< 5.0"}</option>
-              <option value="6">{"< 6.0"}</option>
+              <option value="2.5">{"< 2.5"}</option>
+              <option value="4.5">{"< 4.5"}</option>
+              <option value="6.5">{"< 6.5"}</option>
+              <option value="8.5">{"< 8.5"}</option>
             </select>
           </div>
         )}
