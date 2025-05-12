@@ -1,9 +1,0 @@
-.info {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .label {
-    min-width: 100px;
-    text-align: left;
-  }
