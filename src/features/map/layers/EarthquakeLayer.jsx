@@ -44,7 +44,7 @@ const EarthquakeLayer = ({ map, magnitudeFilter }) => {
           source: "earthquakes",
           paint: {
             "circle-radius": ["*", ["to-number", ["get", "mag"]], 1.5],
-            "circle-stroke-width": 2,
+            "circle-stroke-width": 3,
             "circle-color": [
               "case",
               ["<=", ["to-number", ["get", "depth"]], 50],

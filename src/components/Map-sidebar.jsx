@@ -4,6 +4,7 @@ import { CiWarning, CiFilter } from "react-icons/ci";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import logoBMKG from "@/assets/BMKG.svg";
 import logoProduct from "@/assets/logoipsum-338.svg";
+import { Link } from "react-router-dom";
 
 const AppSidebar = ({
   toggleSidebar,
@@ -30,7 +31,7 @@ const AppSidebar = ({
       <div className="flex items-center justify-between p-4 border-b border-gray-300 dark:border-gray-700">
         <div className="flex items-center gap-5">
           <img src={logoProduct} alt="Logo Produk" className="h-8 w-8" />
-          <h1 className="font-reenie text-2xl font-bold">Gempa Bumi</h1>
+          <h1 className="font-reenie text-xl font-bold">SeismoTrack</h1>
         </div>
         {/* Tombol Tutup Sidebar */}
         <button
@@ -86,6 +87,11 @@ const AppSidebar = ({
             </select>
           </div>
         )}
+        <Link to="/">
+          <button className="w-full flex justify-between items-center p-2 hover:bg-gray-200 dark:hover:bg-gray-800">
+            Home
+          </button>
+        </Link>
       </div>
 
       {/* Sidebar Footer */}

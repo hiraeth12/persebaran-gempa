@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import AnimatedPopup from "mapbox-gl-animated-popup";
 import FeltEarthquakePopup from "./FeltEarthquakePopup";
@@ -11,7 +11,6 @@ export const showFeltEarthquakePopup = () => {
   if (!mapInstance) return;
 
   const features = mapInstance.querySourceFeatures("felt-earthquake");
-
   if (features.length > 0) {
     const feltEarthquake = features[0];
     const coordinates = feltEarthquake.geometry.coordinates;
@@ -21,8 +20,6 @@ export const showFeltEarthquakePopup = () => {
       center: coordinates,
       essential: true,
     });
-
-    console.log("Popup Properties:", properties);
 
     const popupContainer = document.createElement("div");
     const root = createRoot(popupContainer);
@@ -53,21 +50,19 @@ export const showFeltEarthquakePopup = () => {
 };
 
 const FeltEarthquakeLayer = ({ map, magnitudeFilter }) => {
+  const intervalRef = useRef(null);
+
   useEffect(() => {
     mapInstance = map;
 
     const loadFeltEarthquake = async () => {
       try {
         const data = await fetchGempaDirasakan();
-        console.log("Fetched Earthquake Data:", data);
-
         if (!data || !data.info) {
           console.warn("No earthquake data available.");
           return;
         }
 
-        // Ambil data dari API
-        // Ambil data dari API
         const {
           eventid,
           magnitude,
@@ -94,19 +89,17 @@ const FeltEarthquakeLayer = ({ map, magnitudeFilter }) => {
         const formattedDate = (() => {
           const dateParts = date.split("-");
           if (dateParts.length === 3) {
-            const year = `20${dateParts[2]}`; // Tambahkan "20" agar jadi tahun 2025
-            return `${year}-${dateParts[1]}-${dateParts[0]}`; // Format ke "YYYY-MM-DD"
+            const year = `20${dateParts[2]}`;
+            return `${year}-${dateParts[1]}-${dateParts[0]}`;
           }
           return "Invalid Date";
         })();
 
-        // Gabungkan tanggal & waktu
         let formattedDateTime = `${formattedDate}T${time.replace(
           " WIB",
           ""
         )}+07:00`;
 
-        // Coba parse menjadi objek Date
         const parsedDate = new Date(formattedDateTime);
 
         const formattedTime = new Intl.DateTimeFormat("id-ID", {
@@ -118,7 +111,7 @@ const FeltEarthquakeLayer = ({ map, magnitudeFilter }) => {
           month: "2-digit",
           day: "2-digit",
         }).format(parsedDate);
-        // Simpan ke properties agar bisa digunakan di popup
+
         const feltQuakeFeature = {
           type: "Feature",
           geometry: {
@@ -129,7 +122,7 @@ const FeltEarthquakeLayer = ({ map, magnitudeFilter }) => {
             id: eventid || "Unknown",
             magnitude: parseFloat(magnitude) || 0,
             depth: depth ? depth.replace(" Km", "") : "Tidak diketahui",
-            time: formattedTime, // Simpan dalam format WIB yang sudah benar
+            time: formattedTime,
             area: area || "Tidak diketahui",
             felt: felt || "Tidak ada laporan",
             shakemap_mmi: shakemapMmiUrl,
@@ -151,13 +144,11 @@ const FeltEarthquakeLayer = ({ map, magnitudeFilter }) => {
         };
 
         if (!map.getSource("felt-earthquake")) {
-          console.log("Adding new source...");
           map.addSource("felt-earthquake", {
             type: "geojson",
             data: feltEarthquakeGeoJson,
           });
         } else {
-          console.log("Updating existing source...");
           map.getSource("felt-earthquake").setData(feltEarthquakeGeoJson);
         }
 
@@ -186,16 +177,17 @@ const FeltEarthquakeLayer = ({ map, magnitudeFilter }) => {
             showFeltEarthquakePopup();
           });
         }
+
       } catch (error) {
         console.error("Error fetching felt earthquake data:", error);
       }
     };
 
     loadFeltEarthquake();
-    const interval = setInterval(loadFeltEarthquake, 300000);
+    intervalRef.current = setInterval(loadFeltEarthquake, 30000);
 
     return () => {
-      clearInterval(interval);
+      clearInterval(intervalRef.current);
       if (map.getLayer("felt-earthquake-layer")) {
         map.off("click", "felt-earthquake-layer");
         map.off("mouseenter", "felt-earthquake-layer");
