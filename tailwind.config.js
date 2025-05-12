@@ -62,6 +62,7 @@ export default {
         },
         fontFamily: {
           reenie: ["Reenie Beanie", "cursive"],
+          cascadia: ['"Cascadia Code"', "monospace"],
         },
       },
     },
